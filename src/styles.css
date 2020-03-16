@@ -1,0 +1,85 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-size: 18px;
+    background-image: linear-gradient(to bottom, #dadada 0%,#cecece 50%,#dadada 100%);
+}
+
+h1 {
+    font-size: 2rem;
+    text-align: center;
+    margin: 0.5rem 0;
+}
+
+/* Hide show calculator modules */
+.module {
+    display: none;
+}
+
+.module:target {
+    display: grid;
+}
+
+.tabs{
+    background-color: #e69b2a;
+    display: grid;
+    grid-auto-flow: column;
+    margin-bottom: 0.5rem;
+}
+.tabs a {
+    padding: 0.5rem;
+    color: #fefefe;
+    text-decoration: none;
+}
+.tabs a.active {
+    background-color: #b1771f;
+}
+.tabs a.active:before{
+    content:"▷ "
+}
+
+form {
+    margin: 0 auto;
+    width: 90%;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 50% 50%;
+}
+form:after {
+    content: ".";
+    clear: both;
+    visibility: hidden;
+}
+
+form input,
+form select {
+    margin-bottom: 1rem;
+}
+
+form button[type="submit"] {
+    text-align: center;
+    background: linear-gradient(to bottom, #b4e391 0%,#61c419 50%,#b4e391 100%);
+    border: 1px solid green;
+}
+
+/* Prevent mobile safari from zooming on input focus */
+input[type="color"],
+input[type="date"],
+input[type="datetime"],
+input[type="datetime-local"],
+input[type="email"],
+input[type="month"],
+input[type="number"],
+input[type="password"],
+input[type="search"],
+input[type="tel"],
+input[type="text"],
+input[type="time"],
+input[type="url"],
+input[type="week"],
+select,
+select:focus,
+textarea,
+button {
+  font-size: 18px;
+}

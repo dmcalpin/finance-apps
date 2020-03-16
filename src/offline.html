@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>Dave's Financial Calculators</title>
+        <link rel="icon" href="icon_512.png">
+
+        <!-- Make it a PWA -->
+        <link rel="manifest" href="manifest.json">
+
+        <!-- iOS PWA compatibility-->
+        <meta name="apple-mobile-web-app-capable" content="yes">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="apple-mobile-web-app-title" content="Hello PWA">
+        <link rel="apple-touch-icon" href="icon_512.png">
+
+        <!-- Mobile Viewing -->
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <!-- More PWA Config-->
+        <meta name="description" content="Simple calculators for things like mortage and car loan payments.">
+        <meta name="theme-color" content="#2F3BA2" />
+
+        <script>
+            // Register a service worker
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('./service-worker.js')
+                    .then((reg) => {
+                        console.log('Service worker registered.', reg);
+                    });
+                });
+            }
+        </script>
+
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header>
+            <h1>Dave's Financial Calculators (offline)</h1>
+        </header>
+        <main>
+            
+            <div class="tabs">
+                <a href="#car-loan-calculator">Car Loan</a>
+                <a href="#car-affordability-calculator">Car Affordability</a>
+
+                
+            </div>
+            <script>
+                let tabs = document.querySelector(".tabs")
+                
+                tabs.querySelectorAll("a").forEach(elem => elem.addEventListener('click', (evt)=>{
+                    tabs.querySelector('.active')?.classList.remove('active')
+                    evt.target.classList.add('active')
+                }))
+
+                if (document.location.hash) {
+                    tabs.querySelector(`[href="${document.location.hash}"]`).dispatchEvent(new Event('click'))
+                }
+            </script>
+
+            <!-- Car Loan Calculator -->
+            <form id="car-loan-calculator" class="module">
+                <!-- Vehicle Cost -->
+                <label for="vehicle-cost">Vehicle Cost <i title="required">*</i></label>
+                <input type="number" id="vehicle-cost" required min="0">
+
+                <!-- Sales Tax -->
+                <label for="sales-tax">Sales Tax <i title="required">*</i></label>
+                <input type="number" id="sales-tax" required min="0" step="0.1">
+
+                <!-- Interest Rate -->
+                <label for="interest-rate">Interest Rate <i title="required">*</i></label>
+                <input type="number" id="interest-rate" required min="0" step="0.01">
+
+                <!-- Loan Months -->
+                <label for="loan-months">Loan Months <i title="required">*</i></label>
+                <select id="loan-months">
+                    <option>12</option>
+                    <option>24</option>
+                    <option>36</option>
+                    <option selected>48</option>
+                    <option>60</option>
+                    <option>72</option>
+                    <option>84</option>
+                    <option>96</option>
+                </select>
+
+                <!-- Trade-In Value -->
+                <label for="trade-in-value">Trade-In Value</label>
+                <input type="number" id="trade-in-value" min="0">
+
+                <!-- Dealer Fees -->
+                <label for="dealer-fees">Dealer Fees</label>
+                <input type="number" id="dealer-fees" min="0">
+
+                <!-- Rebates or Incentives -->
+                <label for="rebates-or-incentives">Rebates or Incentives</label>
+                <input type="number" id="rebates-or-incentives" min="0">
+
+                <!-- Down Payment -->
+                <label for="down-payment">Down Payment</label>
+                <input type="number" id="down-payment" min="0">
+
+                <!-- Monthly Payment -->
+                <div>
+                    Monthly Payment:
+                    <br>
+                    <b>$<output id="monthly-payment">0.00</output> per month</b>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit">Calculate</button>
+            </form>
+
+            <!-- Car affordability -->
+            <form id="car-affordability-calculator" class="module">
+                <!-- Monthly Salary -->
+                <label for="cac-monthly-salary">Monthly Salary</label>
+                <input type="number" id="cac-monthly-salary" min="0">
+
+                <!-- Loan Months -->
+                <label for="cac-loan-months">Loan Months <i title="required">*</i></label>
+                <select id="cac-loan-months">
+                    <option>12</option>
+                    <option>24</option>
+                    <option>36</option>
+                    <option selected>48</option>
+                    <option>60</option>
+                    <option>72</option>
+                    <option>84</option>
+                    <option>96</option>
+                </select>
+
+                <!-- Percent Down -->
+                <label for="cac-percent-down">percent-down</label>
+                <input type="number" id="cac-percent-down" value="20" min="0">
+
+                <!-- Interest Rate -->
+                <label for="cac-interest-rate">Interest Rate <i title="required">*</i></label>
+                <input type="number" id="cac-interest-rate" required min="0" step="0.01">
+
+                <!-- Affordability -->
+                <div>
+                    Max Car Cost:
+                    <br>
+                    <b>$<output id="max-car-cost">0.00</output></b>
+                </div>
+
+                <!-- Submit -->
+                <button type="submit">Calculate</button>
+            </form>
+
+        </main>
+
+        <script type="module">
+            // Car Loan Calculator
+            import {carLoanForm, normalizeFormValues} from './Finance.js'
+
+            let form = document.querySelector("#car-loan-calculator")
+            let output = form.querySelector("output")
+
+            form.addEventListener('submit', (evt)=>{
+                evt.preventDefault()
+
+                let values = normalizeFormValues(evt.target.elements)
+
+                let payment = carLoanForm(
+                    values['vehicle-cost'],
+                    values['sales-tax'],
+                    values['trade-in-value'],
+                    values['dealer-fees'],
+                    values['rebates-or-incentives'],
+                    values['down-payment'],
+                    values['interest-rate'],
+                    values['loan-months']
+                )
+
+                output.innerHTML = payment.toFixed(2)
+            })
+        </script>
+
+        <script type="module">
+            // Car Affordability Calculator
+            import {carAffordabilityForm, normalizeFormValues} from './Finance.js'
+
+            let form = document.querySelector("#car-affordability-calculator")
+            let output = form.querySelector("output")
+
+            form.addEventListener('submit', (evt)=>{
+                evt.preventDefault()
+                let values = normalizeFormValues(evt.target.elements)
+
+                let payment = carAffordabilityForm(
+                    values['cac-monthly-salary'],
+                    values['cac-loan-months'],
+                    values['cac-percent-down'],
+                    values['cac-interest-rate']
+                )
+
+                output.innerHTML = payment.toFixed(2)
+            })
+        </script>
+    </body>
+</html>
