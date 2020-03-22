@@ -44,19 +44,22 @@
             <div class="tabs">
                 <a href="#car-loan-calculator">Car Loan</a>
                 <a href="#car-affordability-calculator">Car Affordability</a>
-
-                
             </div>
             <script>
                 let tabs = document.querySelector(".tabs")
                 
                 tabs.querySelectorAll("a").forEach(elem => elem.addEventListener('click', (evt)=>{
-                    tabs.querySelector('.active')?.classList.remove('active')
+                    activeTab = tabs.querySelector('.active')
+                    if(activeTab){
+                        tabs.querySelector('.active').classList.remove('active')
+                    }
                     evt.target.classList.add('active')
                 }))
-
+                
                 if (document.location.hash) {
-                    tabs.querySelector(`[href="${document.location.hash}"]`).dispatchEvent(new Event('click'))
+                    tabs.querySelector(`[href="${document.location.hash}"]`).dispatchEvent(new MouseEvent('click'))
+                } else {
+                    tabs.querySelector("a").dispatchEvent(new MouseEvent('click'))
                 }
             </script>
 

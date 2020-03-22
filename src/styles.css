@@ -1,3 +1,6 @@
+* {
+    box-sizing: border-box;
+}
 body {
     margin: 0;
     padding: 0;
@@ -34,7 +37,7 @@ h1 {
 .tabs a.active {
     background-color: #b1771f;
 }
-.tabs a.active:before{
+.tabs a.active::before{
     content:"▷ "
 }
 
@@ -54,6 +57,7 @@ form:after {
 form input,
 form select {
     margin-bottom: 1rem;
+    width: 100%;
 }
 
 form button[type="submit"] {
